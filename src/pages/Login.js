@@ -15,29 +15,34 @@ function Login() {
     }
   }, [navigate]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const response = await api.post("/api/login/", {
-        username,
-        password,
-      });
+  try {
+    const response = await api.post("/api/token/", {
+      username,
+      password,
+    });
 
-      localStorage.setItem("access", response.data.access);
-      navigate("/dashboard");
-    } catch (error) {
-      alert("Invalid credentials");
-    } finally {
-      setLoading(false);
-    }
-  };
+    localStorage.setItem("access", response.data.access);
+    localStorage.setItem("refresh", response.data.refresh);
+
+    navigate("/dashboard");
+
+  } catch (error) {
+    console.log(error.response?.data);
+    alert("Invalid credentials");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2 style={styles.title}>Admin Login</h2>
+        <h2 style={styles.title}>Lumora Admin Login</h2>
 
         <form onSubmit={handleLogin} style={styles.form}>
           <input
