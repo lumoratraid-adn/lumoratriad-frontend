@@ -7,18 +7,12 @@ function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("list"); // 'list' or 'create' for mobile
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    project_name: "",
-    description: "",
-    budget: "",
-    timeline: "",
-    demo_date: "",
-    client_name: "",
-    contact_number: "",
-    reference_person: "",
-    status: "pending",
+    project_name: "", description: "", budget: "", timeline: "",
+    demo_date: "", client_name: "", contact_number: "", reference_person: "", status: "pending",
   });
 
   const token = localStorage.getItem("access");
@@ -44,51 +38,46 @@ function Dashboard() {
   }, [fetchProjects]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingId) {
-        await api.put(`/api/projects/${editingId}/`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await api.put(`/api/projects/${editingId}/`, formData, { headers: { Authorization: `Bearer ${token}` } });
       } else {
-        await api.post("/api/projects/", formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await api.post("/api/projects/", formData, { headers: { Authorization: `Bearer ${token}` } });
       }
       await fetchProjects();
-      setFormData({
-        project_name: "", description: "", budget: "", timeline: "",
-        demo_date: "", client_name: "", contact_number: "", reference_person: "", status: "pending"
-      });
-      setEditingId(null);
+      resetForm();
+      setActiveTab("list"); // Switch back to list after save
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       alert("Error saving project");
     }
   };
 
+  const resetForm = () => {
+    setFormData({ project_name: "", description: "", budget: "", timeline: "", demo_date: "", client_name: "", contact_number: "", reference_person: "", status: "pending" });
+    setEditingId(null);
+  };
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this project?")) return;
+    if (!window.confirm("Delete this project?")) return;
     try {
-      await api.delete(`/api/projects/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/api/projects/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
       fetchProjects();
     } catch (error) {
-      alert("Error deleting project");
+      alert("Error deleting");
     }
   };
 
   const handleEdit = (project) => {
     setFormData(project);
     setEditingId(project.id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setActiveTab("create"); // Switch to form tab
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const filteredProjects = projects.filter((project) =>
@@ -98,70 +87,76 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* Header */}
-      <header className="dashboard-header fade-in">
-        <div>
-          <h1 className="dashboard-title">Lumora Portal</h1>
-          <p className="dashboard-subtitle">Manage Projects & Clients</p>
+      <header className="dashboard-header">
+        <div className="brand-section">
+          <h1>Lumora Portal</h1>
         </div>
         <button onClick={handleLogout} className="logout-btn">
           Sign Out
         </button>
       </header>
 
-      <div className="content-grid fade-in">
+      {/* Mobile Tabs */}
+      <div className="mobile-tabs">
+        <button
+          className={`tab-btn ${activeTab === "list" ? "active" : ""}`}
+          onClick={() => setActiveTab("list")}
+        >
+          📂 Projects
+        </button>
+        <button
+          className={`tab-btn ${activeTab === "create" ? "active" : ""}`}
+          onClick={() => setActiveTab("create")}
+        >
+          {editingId ? "✏️ Edit Project" : "➕ Create New"}
+        </button>
+      </div>
 
-        {/* FORM SECTION */}
-        <div className="form-section">
+      <div className="content-grid">
+
+        {/* FORM SECTION (Visible if tab='create' or desktop) */}
+        <div className="view-container form-section" style={{ display: activeTab === 'create' ? 'block' : 'none' }}>
           <div className="form-card">
-            <h3 className="form-title">{editingId ? "Edit Project" : "Add New Project"}</h3>
+            <h3 className="form-title">{editingId ? "Edit Project" : "New Project Details"}</h3>
 
             <form onSubmit={handleSubmit} className="form-grid">
 
-              <div className="input-group">
+              <div>
                 <label className="label-text">Project Name</label>
-                <input name="project_name" value={formData.project_name} onChange={handleChange} placeholder="e.g. Website Redesign" className="dashboard-input" required />
+                <input name="project_name" value={formData.project_name} onChange={handleChange} className="dashboard-input" required />
               </div>
 
-              <div className="input-group">
+              <div>
                 <label className="label-text">Description</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Project details..." className="dashboard-input" />
+                <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="dashboard-input" />
               </div>
 
-              <div className="row-2">
-                <div className="input-group">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                <div>
                   <label className="label-text">Budget</label>
-                  <input name="budget" value={formData.budget} onChange={handleChange} placeholder="$0.00" className="dashboard-input" />
+                  <input name="budget" value={formData.budget} onChange={handleChange} placeholder="$" className="dashboard-input" />
                 </div>
-                <div className="input-group">
+                <div>
                   <label className="label-text">Timeline</label>
-                  <input name="timeline" value={formData.timeline} onChange={handleChange} placeholder="Duration" className="dashboard-input" />
+                  <input name="timeline" value={formData.timeline} onChange={handleChange} className="dashboard-input" />
                 </div>
               </div>
 
-              <div className="input-group">
-                <label className="label-text">Demo / Deadline</label>
+              <div>
+                <label className="label-text">Due Date</label>
                 <input type="date" name="demo_date" value={formData.demo_date} onChange={handleChange} className="dashboard-input" />
               </div>
 
-              <hr style={{ border: '0', borderTop: '1px solid var(--border)', margin: '10px 0' }} />
-
-              <div className="input-group">
-                <label className="label-text">Client Name</label>
-                <input name="client_name" value={formData.client_name} onChange={handleChange} placeholder="Company or Name" className="dashboard-input" />
-              </div>
-
-              <div className="row-2">
-                <div className="input-group">
-                  <label className="label-text">Phone</label>
-                  <input name="contact_number" value={formData.contact_number} onChange={handleChange} placeholder="+1 234..." className="dashboard-input" />
-                </div>
-                <div className="input-group">
-                  <label className="label-text">Reference</label>
-                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Ref Name" className="dashboard-input" />
+              <div>
+                <label className="label-text">Client</label>
+                <input name="client_name" value={formData.client_name} onChange={handleChange} className="dashboard-input" style={{ marginBottom: '10px' }} />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                  <input name="contact_number" value={formData.contact_number} onChange={handleChange} placeholder="Phone" className="dashboard-input" />
+                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Ref" className="dashboard-input" />
                 </div>
               </div>
 
-              <div className="input-group">
+              <div>
                 <label className="label-text">Status</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="dashboard-input">
                   <option value="pending">Pending</option>
@@ -171,27 +166,23 @@ function Dashboard() {
               </div>
 
               <button type="submit" className="primary-btn">
-                {editingId ? "Update Project" : "Create Project"}
+                {editingId ? "Update Project" : "Save Project"}
               </button>
 
               {editingId && (
-                <button
-                  type="button"
-                  onClick={() => { setEditingId(null); setFormData({ project_name: "", description: "", budget: "", timeline: "", demo_date: "", client_name: "", contact_number: "", reference_person: "", status: "pending" }); }}
-                  className="cancel-btn"
-                >
-                  Cancel Edit
+                <button type="button" onClick={() => { resetForm(); setActiveTab("list"); }} className="cancel-btn">
+                  Cancel
                 </button>
               )}
             </form>
           </div>
         </div>
 
-        {/* LIST SECTION */}
-        <div className="list-section">
+        {/* LIST SECTION (Visible if tab='list' or desktop) */}
+        <div className="view-container list-section" style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
           <input
             type="text"
-            placeholder="Search projects by name..."
+            placeholder="Search projects..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-bar"
@@ -199,7 +190,7 @@ function Dashboard() {
 
           <div className="projects-grid">
             {filteredProjects.length === 0 ? (
-              <p style={{ color: "var(--text-muted)", gridColumn: "1/-1", textAlign: "center", marginTop: "2rem" }}>No projects found.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", color: "var(--text-muted)", marginTop: "2rem" }}>No projects found.</p>
             ) : (
               filteredProjects.map((project) => (
                 <div key={project.id} className="project-card">
@@ -211,14 +202,14 @@ function Dashboard() {
                   </div>
 
                   <p className="project-desc">
-                    {project.description || "No description provided."}
+                    {project.description || "No description."}
                   </p>
 
                   <div className="project-meta">
-                    <div className="meta-row"><span>📅</span> {project.demo_date || "N/A"}</div>
-                    <div className="meta-row"><span>💰</span> {project.budget ? `$${project.budget}` : "-"}</div>
-                    <div className="meta-row"><span>👤</span> {project.client_name || "-"}</div>
-                    <div className="meta-row"><span>📞</span> {project.contact_number || "-"}</div>
+                    <div>📅 {project.demo_date || "-"}</div>
+                    <div>💰 {project.budget ? `$${project.budget}` : "-"}</div>
+                    <div>👤 {project.client_name || "-"}</div>
+                    <div>📞 {project.contact_number || "-"}</div>
                   </div>
 
                   <div className="actions">
