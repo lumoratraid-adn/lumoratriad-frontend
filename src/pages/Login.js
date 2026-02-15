@@ -42,7 +42,7 @@ const handleLogin = async (e) => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2 style={styles.title}>Lumora Admin Login</h2>
+        <h2 style={styles.title}>LumoraTriad Admin Login</h2>
 
         <form onSubmit={handleLogin} style={styles.form}>
           <input
