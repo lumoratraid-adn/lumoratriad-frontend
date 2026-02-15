@@ -7,7 +7,7 @@ function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("list");
+  const [activeTab, setActiveTab] = useState("list"); // 'list' or 'create' for mobile
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -51,7 +51,7 @@ function Dashboard() {
       }
       await fetchProjects();
       resetForm();
-      setActiveTab("list");
+      setActiveTab("list"); // Switch back to list after save
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       alert("Error saving project");
@@ -76,7 +76,7 @@ function Dashboard() {
   const handleEdit = (project) => {
     setFormData(project);
     setEditingId(project.id);
-    setActiveTab("create");
+    setActiveTab("create"); // Switch to form tab
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -87,9 +87,10 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* Header */}
-      <header className="dashboard-header glass-card">
-        <div className="brand-section">
-          <h1 className="brand-title">Lumora Portal</h1>
+      <header className="dashboard-header fade-in">
+        <div>
+          <h1 className="dashboard-title">Lumora Portal</h1>
+          <p className="dashboard-subtitle">Manage Projects & Clients</p>
         </div>
         <button onClick={handleLogout} className="logout-btn">
           Sign Out
@@ -98,58 +99,74 @@ function Dashboard() {
 
       {/* Mobile Tabs */}
       <div className="mobile-tabs">
-        <button className={`tab-btn ${activeTab === "list" ? "active" : ""}`} onClick={() => setActiveTab("list")}>
+        <button
+          className={`tab-btn ${activeTab === "list" ? "active" : ""}`}
+          onClick={() => setActiveTab("list")}
+        >
           📂 Projects
         </button>
-        <button className={`tab-btn ${activeTab === "create" ? "active" : ""}`} onClick={() => setActiveTab("create")}>
+        <button
+          className={`tab-btn ${activeTab === "create" ? "active" : ""}`}
+          onClick={() => setActiveTab("create")}
+        >
           {editingId ? "✏️ Edit" : "➕ Create"}
         </button>
       </div>
 
-      <div className="content-grid">
+      <div className="content-grid fade-in">
 
         {/* FORM SECTION */}
         <div className="view-container form-section" style={{ display: activeTab === 'create' ? 'block' : 'none' }}>
-          <div className="form-card glass-card">
+          <div className="form-card">
             <h3 className="form-title">{editingId ? "Edit Project" : "New Project Details"}</h3>
 
             <form onSubmit={handleSubmit} className="form-grid">
-              <div>
+
+              <div className="input-group">
                 <label className="label-text">Project Name</label>
                 <input name="project_name" value={formData.project_name} onChange={handleChange} className="dashboard-input" required />
               </div>
 
-              <div>
+              <div className="input-group">
                 <label className="label-text">Description</label>
                 <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="dashboard-input" />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                <div>
+              <div className="row-2">
+                <div className="input-group">
                   <label className="label-text">Budget</label>
                   <input name="budget" value={formData.budget} onChange={handleChange} placeholder="$" className="dashboard-input" />
                 </div>
-                <div>
+                <div className="input-group">
                   <label className="label-text">Timeline</label>
                   <input name="timeline" value={formData.timeline} onChange={handleChange} className="dashboard-input" />
                 </div>
               </div>
 
-              <div>
+              <div className="input-group">
                 <label className="label-text">Due Date</label>
                 <input type="date" name="demo_date" value={formData.demo_date} onChange={handleChange} className="dashboard-input" />
               </div>
 
-              <div>
+              <hr style={{ border: '0', borderTop: '1px solid var(--border)', margin: '10px 0' }} />
+
+              <div className="input-group">
                 <label className="label-text">Client</label>
                 <input name="client_name" value={formData.client_name} onChange={handleChange} className="dashboard-input" style={{ marginBottom: '10px' }} />
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              </div>
+
+              <div className="row-2">
+                <div className="input-group">
+                  <label className="label-text">Phone</label>
                   <input name="contact_number" value={formData.contact_number} onChange={handleChange} placeholder="Phone" className="dashboard-input" />
-                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Ref" className="dashboard-input" />
+                </div>
+                <div className="input-group">
+                  <label className="label-text">Ref</label>
+                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Reference" className="dashboard-input" />
                 </div>
               </div>
 
-              <div>
+              <div className="input-group">
                 <label className="label-text">Status</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="dashboard-input">
                   <option value="pending">Pending</option>
@@ -183,10 +200,10 @@ function Dashboard() {
 
           <div className="projects-grid">
             {filteredProjects.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", color: "rgba(255,255,255,0.6)", marginTop: "2rem" }}>No projects found.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", color: "var(--text-muted)", marginTop: "2rem" }}>No projects found.</p>
             ) : (
               filteredProjects.map((project) => (
-                <div key={project.id} className="project-card glass-card">
+                <div key={project.id} className="project-card">
                   <div className="project-header">
                     <h4 className="project-title">{project.project_name}</h4>
                     <span className={`status-badge status-${project.status}`}>
@@ -199,10 +216,10 @@ function Dashboard() {
                   </p>
 
                   <div className="project-meta">
-                    <div>📅 {project.demo_date || "-"}</div>
-                    <div>💰 {project.budget ? `$${project.budget}` : "-"}</div>
-                    <div>👤 {project.client_name || "-"}</div>
-                    <div>📞 {project.contact_number || "-"}</div>
+                    <div className="meta-row"><span>📅</span> {project.demo_date || "-"}</div>
+                    <div className="meta-row"><span>💰</span> {project.budget ? `$${project.budget}` : "-"}</div>
+                    <div className="meta-row"><span>👤</span> {project.client_name || "-"}</div>
+                    <div className="meta-row"><span>📞</span> {project.contact_number || "-"}</div>
                   </div>
 
                   <div className="actions">
