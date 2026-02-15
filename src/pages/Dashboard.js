@@ -1,6 +1,9 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
+
+
+
 
 function Dashboard() {
   const [projects, setProjects] = useState([]);
@@ -27,25 +30,22 @@ function Dashboard() {
     navigate("/");
   };
 
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/projects/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setProjects(response.data);
-    } catch (error) {
-      console.log("Error fetching projects");
-    }
-  };
+ const fetchProjects = useCallback(async () => {
+  try {
+    const response = await api.get("/api/projects/", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setProjects(response.data);
+  } catch (error) {
+    console.log("Error fetching projects");
+  }
+}, [token]);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+
+useEffect(() => {
+  fetchProjects();
+}, [fetchProjects]);
+
 
   const handleChange = (e) => {
     setFormData({
@@ -55,67 +55,69 @@ function Dashboard() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      if (editingId) {
-        await axios.put(
-          `http://127.0.0.1:8000/api/projects/${editingId}/`,
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post(
-          "http://127.0.0.1:8000/api/projects/",
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
-
-      await fetchProjects();
-
-      setFormData({
-        project_name: "",
-        description: "",
-        budget: "",
-        timeline: "",
-        demo_date: "",
-        client_name: "",
-        contact_number: "",
-        reference_person: "",
-        status: "pending",
-      });
-
-      setEditingId(null);
-
-    } catch (error) {
-      alert("Error saving project");
-    }
-  };
-
-  // 🔥 Delete with confirmation
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
-    if (!confirmDelete) return;
-
-    try {
-      await axios.delete(
-        `http://127.0.0.1:8000/api/projects/${id}/`,
+  try {
+    if (editingId) {
+      await api.put(
+        `/api/projects/${editingId}/`,
+        formData,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      fetchProjects();
-
-    } catch (error) {
-      alert("Error deleting project");
+    } else {
+      await api.post(
+        "/api/projects/",
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     }
-  };
+
+    await fetchProjects();
+
+    setFormData({
+      project_name: "",
+      description: "",
+      budget: "",
+      timeline: "",
+      demo_date: "",
+      client_name: "",
+      contact_number: "",
+      reference_person: "",
+      status: "pending",
+    });
+
+    setEditingId(null);
+
+  } catch (error) {
+    alert("Error saving project");
+  }
+};
+
+
+  // 🔥 Delete with confirmation
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+  if (!confirmDelete) return;
+
+  try {
+    await api.delete(
+      `/api/projects/${id}/`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    fetchProjects();
+
+  } catch (error) {
+    alert("Error deleting project");
+  }
+};
+
 
   const handleEdit = (project) => {
     setFormData(project);
