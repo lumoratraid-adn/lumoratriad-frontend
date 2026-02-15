@@ -20,7 +20,7 @@ const handleLogin = async (e) => {
   setLoading(true);
 
   try {
-    const response = await api.post("/api/token/", {
+    const response = await api.post("/api/login/", {
       username,
       password,
     });
