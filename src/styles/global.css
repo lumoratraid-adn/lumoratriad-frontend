@@ -1,28 +1,27 @@
 :root {
-  /* Simple, Clean Dark Theme Palette */
-  --bg-body: #0b1120;
-  /* Very dark blue/black */
-  --bg-card: #1e293b;
-  /* Slate 800 */
-  --bg-input: #334155;
-  /* Slate 700 */
-
-  --primary: #3b82f6;
-  /* Blue 500 */
-  --primary-hover: #2563eb;
-  /* Blue 600 */
-
-  --text-main: #f8fafc;
+  /* Clean Professional Light Theme */
+  --bg-body: #f8fafc;
   /* Slate 50 */
-  --text-muted: #94a3b8;
-  /* Slate 400 */
+  --bg-card: #ffffff;
+  /* Pure White */
+  --bg-input: #ffffff;
 
-  --border: #334155;
-  /* Slate 700 */
+  --primary: #2563eb;
+  /* Blue 600 */
+  --primary-hover: #1d4ed8;
+  /* Blue 700 */
+
+  --text-main: #0f172a;
+  /* Slate 900 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --border: #e2e8f0;
+  /* Slate 200 */
   --border-focus: #3b82f6;
 
   --radius: 8px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 * {
