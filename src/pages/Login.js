@@ -7,6 +7,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,31 +41,47 @@ function Login() {
 
   return (
     <div className="login-wrapper">
-      <div className="login-card fade-in">
-        <h1 className="brand-title">Lumora Triad</h1>
-        <p className="brand-subtitle">Admin Portal Login</p>
+      <div className="login-card glass-card fade-in">
+        <h2 className="login-title">Admin Login</h2>
+        <p className="login-subtitle">
+          Enter your credentials to access the secure Lumora Portal dashboard.
+        </p>
 
         <form onSubmit={handleLogin} className="login-form">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="login-input"
-          />
+          <div className="input-container">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="login-input"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="login-input"
-          />
+          <div className="input-container">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="login-input"
+            />
+          </div>
+
+          <div className="login-footer">
+            <div className="checkbox-container" onClick={() => setRememberMe(!rememberMe)}>
+              <div className={`custom-chk ${rememberMe ? 'checked' : ''}`}>
+                {rememberMe && <span style={{ fontSize: '10px' }}>✔</span>}
+              </div>
+              <span>Keep me signed in</span>
+            </div>
+            <span style={{ cursor: 'pointer' }}>Forgot Password?</span>
+          </div>
 
           <button type="submit" disabled={loading} className="login-btn">
-            {loading ? "Authenticating..." : "Sign In"}
+            {loading ? "AUTHENTICATING..." : "LOGIN ACCOUNT"}
           </button>
         </form>
       </div>

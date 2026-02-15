@@ -7,7 +7,7 @@ function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("list"); // 'list' or 'create' for mobile
+  const [activeTab, setActiveTab] = useState("list");
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -51,7 +51,7 @@ function Dashboard() {
       }
       await fetchProjects();
       resetForm();
-      setActiveTab("list"); // Switch back to list after save
+      setActiveTab("list");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       alert("Error saving project");
@@ -76,7 +76,7 @@ function Dashboard() {
   const handleEdit = (project) => {
     setFormData(project);
     setEditingId(project.id);
-    setActiveTab("create"); // Switch to form tab
+    setActiveTab("create");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -87,9 +87,9 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* Header */}
-      <header className="dashboard-header">
+      <header className="dashboard-header glass-card">
         <div className="brand-section">
-          <h1>Lumora Portal</h1>
+          <h1 className="brand-title">Lumora Portal</h1>
         </div>
         <button onClick={handleLogout} className="logout-btn">
           Sign Out
@@ -98,29 +98,22 @@ function Dashboard() {
 
       {/* Mobile Tabs */}
       <div className="mobile-tabs">
-        <button
-          className={`tab-btn ${activeTab === "list" ? "active" : ""}`}
-          onClick={() => setActiveTab("list")}
-        >
+        <button className={`tab-btn ${activeTab === "list" ? "active" : ""}`} onClick={() => setActiveTab("list")}>
           📂 Projects
         </button>
-        <button
-          className={`tab-btn ${activeTab === "create" ? "active" : ""}`}
-          onClick={() => setActiveTab("create")}
-        >
-          {editingId ? "✏️ Edit Project" : "➕ Create New"}
+        <button className={`tab-btn ${activeTab === "create" ? "active" : ""}`} onClick={() => setActiveTab("create")}>
+          {editingId ? "✏️ Edit" : "➕ Create"}
         </button>
       </div>
 
       <div className="content-grid">
 
-        {/* FORM SECTION (Visible if tab='create' or desktop) */}
+        {/* FORM SECTION */}
         <div className="view-container form-section" style={{ display: activeTab === 'create' ? 'block' : 'none' }}>
-          <div className="form-card">
+          <div className="form-card glass-card">
             <h3 className="form-title">{editingId ? "Edit Project" : "New Project Details"}</h3>
 
             <form onSubmit={handleSubmit} className="form-grid">
-
               <div>
                 <label className="label-text">Project Name</label>
                 <input name="project_name" value={formData.project_name} onChange={handleChange} className="dashboard-input" required />
@@ -178,7 +171,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* LIST SECTION (Visible if tab='list' or desktop) */}
+        {/* LIST SECTION */}
         <div className="view-container list-section" style={{ display: activeTab === 'list' ? 'block' : 'none' }}>
           <input
             type="text"
@@ -190,10 +183,10 @@ function Dashboard() {
 
           <div className="projects-grid">
             {filteredProjects.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", color: "var(--text-muted)", marginTop: "2rem" }}>No projects found.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", color: "rgba(255,255,255,0.6)", marginTop: "2rem" }}>No projects found.</p>
             ) : (
               filteredProjects.map((project) => (
-                <div key={project.id} className="project-card">
+                <div key={project.id} className="project-card glass-card">
                   <div className="project-header">
                     <h4 className="project-title">{project.project_name}</h4>
                     <span className={`status-badge status-${project.status}`}>
