@@ -33,7 +33,6 @@ function Dashboard() {
       const response = await api.get("/api/projects/", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Sort projects by newest first
       setProjects(response.data.reverse());
     } catch (error) {
       console.log("Error fetching projects");
@@ -89,7 +88,6 @@ function Dashboard() {
   const handleEdit = (project) => {
     setFormData(project);
     setEditingId(project.id);
-    // Scroll to form on mobile
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -103,63 +101,72 @@ function Dashboard() {
       <header className="dashboard-header fade-in">
         <div>
           <h1 className="dashboard-title">Lumora Portal</h1>
-          <p className="dashboard-subtitle">Project & Client Management Suite</p>
+          <p className="dashboard-subtitle">Manage Projects & Clients</p>
         </div>
         <button onClick={handleLogout} className="logout-btn">
           Sign Out
         </button>
       </header>
 
-      {/* Main Grid */}
       <div className="content-grid fade-in">
 
-        {/* Left Column: Form */}
+        {/* FORM SECTION */}
         <div className="form-section">
           <div className="form-card">
-            <h3 className="form-title">
-              {editingId ? "Edit Project" : "New Project"}
-            </h3>
+            <h3 className="form-title">{editingId ? "Edit Project" : "Add New Project"}</h3>
+
             <form onSubmit={handleSubmit} className="form-grid">
 
-              <div>
-                <input name="project_name" value={formData.project_name} onChange={handleChange} placeholder="Project Name" className="dashboard-input" required />
+              <div className="input-group">
+                <label className="label-text">Project Name</label>
+                <input name="project_name" value={formData.project_name} onChange={handleChange} placeholder="e.g. Website Redesign" className="dashboard-input" required />
               </div>
 
-              <div>
-                <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Project Description" rows="4" className="dashboard-input" />
+              <div className="input-group">
+                <label className="label-text">Description</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Project details..." className="dashboard-input" />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
-                <div>
-                  <p className="label-text">Budget</p>
+              <div className="row-2">
+                <div className="input-group">
+                  <label className="label-text">Budget</label>
                   <input name="budget" value={formData.budget} onChange={handleChange} placeholder="$0.00" className="dashboard-input" />
                 </div>
-                <div>
-                  <p className="label-text">Timeline</p>
-                  <input name="timeline" value={formData.timeline} onChange={handleChange} placeholder="e.g. 2 weeks" className="dashboard-input" />
+                <div className="input-group">
+                  <label className="label-text">Timeline</label>
+                  <input name="timeline" value={formData.timeline} onChange={handleChange} placeholder="Duration" className="dashboard-input" />
                 </div>
               </div>
 
-              <div>
-                <p className="label-text">Demo / Due Date</p>
+              <div className="input-group">
+                <label className="label-text">Demo / Deadline</label>
                 <input type="date" name="demo_date" value={formData.demo_date} onChange={handleChange} className="dashboard-input" />
               </div>
 
-              <div>
-                <p className="label-text">Client Details</p>
-                <input name="client_name" value={formData.client_name} onChange={handleChange} placeholder="Client Name" className="dashboard-input" style={{ marginBottom: '10px' }} />
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                  <input name="contact_number" value={formData.contact_number} onChange={handleChange} placeholder="Phone" className="dashboard-input" />
-                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Reference" className="dashboard-input" />
+              <hr style={{ border: '0', borderTop: '1px solid var(--border)', margin: '10px 0' }} />
+
+              <div className="input-group">
+                <label className="label-text">Client Name</label>
+                <input name="client_name" value={formData.client_name} onChange={handleChange} placeholder="Company or Name" className="dashboard-input" />
+              </div>
+
+              <div className="row-2">
+                <div className="input-group">
+                  <label className="label-text">Phone</label>
+                  <input name="contact_number" value={formData.contact_number} onChange={handleChange} placeholder="+1 234..." className="dashboard-input" />
+                </div>
+                <div className="input-group">
+                  <label className="label-text">Reference</label>
+                  <input name="reference_person" value={formData.reference_person} onChange={handleChange} placeholder="Ref Name" className="dashboard-input" />
                 </div>
               </div>
 
-              <div>
-                <p className="label-text">Project Status</p>
+              <div className="input-group">
+                <label className="label-text">Status</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="dashboard-input">
-                  <option value="pending">🟡 Pending</option>
-                  <option value="ongoing">🔵 Ongoing</option>
-                  <option value="completed">🟢 Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="completed">Completed</option>
                 </select>
               </div>
 
@@ -180,27 +187,22 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Right Column: Projects List */}
-        <div className="projects-section">
-          <div className="search-wrapper">
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-bar"
-            />
-          </div>
+        {/* LIST SECTION */}
+        <div className="list-section">
+          <input
+            type="text"
+            placeholder="Search projects by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-bar"
+          />
 
           <div className="projects-grid">
             {filteredProjects.length === 0 ? (
-              <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "4rem", color: "var(--text-gray)", background: "var(--card-bg)", borderRadius: "var(--radius-lg)", border: "var(--glass-border)" }}>
-                <h3>No projects found</h3>
-                <p>Create a new project to get started.</p>
-              </div>
+              <p style={{ color: "var(--text-muted)", gridColumn: "1/-1", textAlign: "center", marginTop: "2rem" }}>No projects found.</p>
             ) : (
-              filteredProjects.map((project, index) => (
-                <div key={project.id} className={`project-card fade-in stagger-${(index % 5) + 1}`}>
+              filteredProjects.map((project) => (
+                <div key={project.id} className="project-card">
                   <div className="project-header">
                     <h4 className="project-title">{project.project_name}</h4>
                     <span className={`status-badge status-${project.status}`}>
@@ -213,25 +215,22 @@ function Dashboard() {
                   </p>
 
                   <div className="project-meta">
-                    <div className="meta-item">📅 <span>{project.demo_date || "N/A"}</span></div>
-                    <div className="meta-item">💰 <span>{project.budget ? `$${project.budget}` : "N/A"}</span></div>
-                    <div className="meta-item">👤 <span>{project.client_name || "N/A"}</span></div>
-                    <div className="meta-item">📞 <span>{project.contact_number || "N/A"}</span></div>
+                    <div className="meta-row"><span>📅</span> {project.demo_date || "N/A"}</div>
+                    <div className="meta-row"><span>💰</span> {project.budget ? `$${project.budget}` : "-"}</div>
+                    <div className="meta-row"><span>👤</span> {project.client_name || "-"}</div>
+                    <div className="meta-row"><span>📞</span> {project.contact_number || "-"}</div>
                   </div>
 
                   <div className="actions">
-                    <button onClick={() => handleEdit(project)} className="action-btn btn-edit">
-                      <span>✏️</span> Edit
-                    </button>
-                    <button onClick={() => handleDelete(project.id)} className="action-btn btn-delete">
-                      <span>🗑️</span> Delete
-                    </button>
+                    <button onClick={() => handleEdit(project)} className="action-btn btn-edit">Edit</button>
+                    <button onClick={() => handleDelete(project.id)} className="action-btn btn-delete">Delete</button>
                   </div>
                 </div>
               ))
             )}
           </div>
         </div>
+
       </div>
     </div>
   );

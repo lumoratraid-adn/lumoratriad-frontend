@@ -39,38 +39,31 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="glow-effect glow-top-left"></div>
-      <div className="glow-effect glow-bottom-right"></div>
-
+    <div className="login-wrapper">
       <div className="login-card fade-in">
-        <h2 className="login-title">LumoraTriad</h2>
-        <p className="login-subtitle">Secure Admin Portal</p>
+        <h1 className="brand-title">Lumora Triad</h1>
+        <p className="brand-subtitle">Admin Portal Login</p>
 
         <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="form-input"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="login-input"
+          />
 
-          <div className="form-group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="form-input"
-            />
-          </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="login-input"
+          />
 
-          <button type="submit" disabled={loading} className="login-button">
+          <button type="submit" disabled={loading} className="login-btn">
             {loading ? "Authenticating..." : "Sign In"}
           </button>
         </form>
